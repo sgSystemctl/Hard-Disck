@@ -28,8 +28,6 @@ typedef struct
 
 static interface int_hd;
 
-#define APPEND        0x00 
-#define NO_APPEND     0x01
 
 //Scrive sul disco in due modalità append e non append
 //nel 4 track più significati è scritto il settore da scrivere
@@ -38,13 +36,7 @@ bool writeHD(const void* const,size_t,size_t);
 //legge un intero settore
 bool readHD(void*,size_t,u_int64_t);
 
-#define BIT_START 1 << 5
-#define BIT_READ  1 << 4 
-#define BIT_WRITE 1 << 3 
 
-#define ERR_READ        0x04
-#define ERR_WRITE       0x03
-#define ERR_MOD_UNKOWN  0x05 //modalità non supportata
 void* inth(void*);
 
 bool start_disp();
@@ -53,11 +45,6 @@ bool saveHD(const char* const);
 
 bool loadHD(const char* const);
 
-//Modalità di stampa del disco
-#define ALL_SECT    (const u_int8_t) 0x00 //Modalità che stampa tutto il disco
-#define FIRST_SECT  (const u_int8_t) 0x01 //Modalità che stampa il primo settore
-#define N_SECT      (const u_int8_t) 0x02 //modalità dove viene stampato un intero settore il numero di settore è nella parte alta della parola
-#define LAST_SECT   (const u_int8_t) 0x04 //Modalità che stampa l'ultimo settore 
 
 void printHD(const size_t);
 
