@@ -1,2 +1,6 @@
-./hd
-./*.gch
+# Ignora i file oggetto .o
+*.o
+
+# Ignora gli eseguibili, come hd e debug
+hd
+debug
