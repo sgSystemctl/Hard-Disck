@@ -1,38 +1,39 @@
 # **HARD DISK "VIRTUALE"**
 
   Piccolo progetto fatto più come passatempo che come utilità vera e propria
-  
-  ## DESCRIZIONE
-  La struttura dati sector rappresenta un settore dell'hard disk che è totalmente personalizzabile tramite le due macro presenti all'interno del file [``hd.hpp``](hd.hpp).
-  La struttura interface simula una possibile interfaccia del dispositivo che è il modo in cui la CPU parla con il dispositivo
-  non ostante per ora non siano implementati l'interfaccia è già stata predisposta per gli hard disk a doppia densità e gli hard disk
-  su più livelli (ovvero quelli con più di un piatto che tipicamente si indica con il numero del cilindro a cui appartengono).
+
+## DESCRIZIONE
+La struttura dati sector rappresenta un settore dell'hard disk che è totalmente personalizzabile tramite le due macro presenti all'interno del file [``hd.hpp``](hd.hpp).
+La struttura interface simula una possibile interfaccia del dispositivo che è il modo in cui la CPU parla con il dispositivo
+non ostante per ora non siano implementati l'interfaccia è già stata predisposta per gli hard disk a doppia densità e gli hard disk
+su più livelli (ovvero quelli con più di un piatto che tipicamente si indica con il numero del cilindro a cui appartengono).
 
 
-  ## Funzioni di utilità 
-  | Nome        | Firma                                                |   
-  |:-----------:|:----------------------------------------------------------------:|
-  | ReadHD      |``` cpp bool readHD(void* buff, size_t len, u_int64_t n_sect); ``` |
-  <tr><th>Nome</th>       <th>Firma</th></tr>
-  <tr><td>ReadHD</td>     <td><code>bool readHD(void* buff,size_t len,u_int64_t n_sect);</code></td></tr>
-  <tr><td>WriteHD</td>    <td><code>bool writeHD(const void* const buff,size_t len,size_t mode = APPEND)</code></td></tr>
-  <tr><td>LoadHD</td>     <td><code>bool loadHD(const char* const path = "./hd.txt");</code></td></tr>
-  <tr><td>SaveHD</td>     <td><code>bool saveHD(const char* const path = "./hd.txt");</code></td></tr>
-  <tr><td>WriteTest</td>  <td><code>void writeTest(void);</code></td></tr>
-  <tr><td>PrintHD</td>    <td><code>void printHD(const size_t mode = ALL_SECT);</code></td></tr>
+## Funzioni di utilità 
+| Nome          | Firma                                                                     |   
+|:-------------:|:-------------------------------------------------------------------------:|
+| **ReadHD**    |``` bool readHD(void* buff, size_t len, u_int64_t n_sect);       ```       |
+| **WriteHD**   |``` bool writeHD(const void* const buff,size_t len,size_t mode = APPEND)```|
+| **LoadHD**    |``` bool loadHD(const char* const path = "./hd.txt");```                   |
+| **SaveHD**    |``` bool saveHD(const char* const path = "./hd.txt");```                   |
+| **WriteTest** |``` void writeTest(void);```                                               |
+| **PrintHD**   |``` void printHD(const size_t mode = ALL_SECT);```                         |
+
+### readHD 
+```cpp
+  bool readHD(void* buff,size_t len,u_int64_t n_sect);
+```
+
+La funzione readHD è una funziona di utilità che serve per leggere una grandezza len di un settore nsect ovviamente questa cosa è puramente una "magia del software" in quanto un hard disk reale è in gradi di leggere scrivere interi settori e non porzioni di essi  
 
 
-  ### readHD 
-  <code>bool readHD(void* buff,size_t len,u_int64_t n_sect);</code>
-  <p>
-    La funzione readHD è una funziona di utilità che serve per leggere una grandezza len di un settore nsect ovviamente questa cosa è puramente una "magia del software" in quanto un hard disk reale è in gradi di leggere scrivere interi settori e non porzioni di essi  
-  </p>
+### WriteHD
+```cpp
+  bool writeHD(const void* const buff,size_t len,size_t mode = APPEND);
+```
 
-  ### WriteHD
-  <code>bool writeHD(const void* const buff,size_t len,size_t mode = APPEND)</code>
-<p>
-    Funzione di utilità che legge len byte dal disco in una delle due modalità definite append o no append.
-</p>
+Funzione di utilità che legge len byte dal disco in una delle due modalità definite append o no append.
+
 <table>
   
   <tr><th>Nome</th>          <th>Descrizione</th></tr>
@@ -41,9 +42,9 @@
 
 </table>
 
-<p>
+
   Nel caso in cui la funzione non riesce a scrive in un settore len byte l'operazione fallisce.
-</p>
+
 
 ### LoadHD
 <code>bool loadHD(const char* const path = "./hd.txt");</code>
