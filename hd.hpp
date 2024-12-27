@@ -8,25 +8,31 @@
 
 #define NUM_SECT 8
 #define DIM_TRACK 64 //Un settore è fatto da DIM_SECT * 8 bit
+#define NUM_FACES 2
+
 
 typedef struct
 {
     u_int8_t track[DIM_TRACK]; 
 }sector;
+//Funzione di utilità per ricavare il valore del settore
+#define GET_SECT(arg) ((arg & ~0XFF) >> 8)
 
-static sector hd[NUM_SECT];
+typedef struct{
+    sector sect[NUM_SECT];
+}HD;
+//Funzione di utilità per ottenere il valore della faccia
+#define GET_FACE(arg) ((arg & 0x10) >> 4)
 
 typedef struct 
 {
-    u_int8_t control = 0;//registro per pilotare il dispositivo
-    u_int8_t status = 0;//registro di stato usato dal dispositivo per comunicare con la cpu il proprio stato
+    u_int8_t control;//registro per pilotare il dispositivo
+    u_int8_t status;//registro di stato usato dal dispositivo per comunicare con la cpu il proprio stato
     sector data;//registro dove viene messo il settore appena letto
     size_t num_sect;//numero di settore che identifica la traccia
-    size_t num_face;//implementazione futura per hardisk a doppia densitò
+    u_int8_t num_face;//implementazione futura per hardisk a doppia densitò
     size_t num_cil;//implementazione futura per hardisk multilivello
 }interface;
-
-static interface int_hd;
 
 
 #define APPEND        0x00 
@@ -36,12 +42,12 @@ static interface int_hd;
 bool writeHD(const void* const buff,size_t len,size_t mode = APPEND);
 
 //legge un intero settore
-bool readHD(void* buff,size_t len = DIM_TRACK,u_int64_t n_sect = 0);
+bool readHD(void* buff,size_t len = DIM_TRACK,u_int64_t n_sect = 0,u_int8_t n_face = 0);
 
 
-#define BIT_START 1 << 5
-#define BIT_READ  1 << 4 
-#define BIT_WRITE 1 << 3 
+#define BIT_START 0x01
+#define BIT_READ  0x02 
+#define BIT_WRITE 0x04 
 
 #define ERR_READ        0x04
 #define ERR_WRITE       0x03
@@ -62,3 +68,10 @@ bool loadHD(const char* const path = "./hd.txt");
 void printHD(const size_t mode = ALL_SECT);
 
 void writeTest(void);
+
+
+void set_int_controll(u_int8_t);
+void set_int_status(u_int8_t);
+void set_int_data(sector);
+void set_int_num_sect(size_t);
+void set_int_face(u_int8_t);
