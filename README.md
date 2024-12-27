@@ -3,23 +3,24 @@
   Piccolo progetto fatto più come passatempo che come utilità vera e propria
   
   ## DESCRIZIONE
-<p>
-    La struttura dati sector rappresenta un settore dell'hard disk che è totalmente personalizzabile tramite le due macro presenti.
-    La struttura interface simula una possibile interfaccia del dispositivo che è il modo in cui la CPU parla con il dispositivo
-    non ostante per ora non siano implementati l'interfaccia è già stata predisposta per gli hard disk a doppia densità e gli hard disk
-    su più livelli (ovvero quelli con più di un piatto che tipicamente si indica con il numero del cilindro a cui appartengono).
-</p>
+  La struttura dati sector rappresenta un settore dell'hard disk che è totalmente personalizzabile tramite le due macro presenti all'interno del file [``hd.hpp``](hd.hpp).
+  La struttura interface simula una possibile interfaccia del dispositivo che è il modo in cui la CPU parla con il dispositivo
+  non ostante per ora non siano implementati l'interfaccia è già stata predisposta per gli hard disk a doppia densità e gli hard disk
+  su più livelli (ovvero quelli con più di un piatto che tipicamente si indica con il numero del cilindro a cui appartengono).
+
 
   ## Funzioni di utilità 
-<table>
-    <tr><th>Nome</th>       <th>Firma</th></tr>
-    <tr><td>ReadHD</td>     <td><code>bool readHD(void* buff,size_t len,u_int64_t n_sect);</code></td></tr>
-    <tr><td>WriteHD</td>    <td><code>bool writeHD(const void* const buff,size_t len,size_t mode = APPEND)</code></td></tr>
-    <tr><td>LoadHD</td>     <td><code>bool loadHD(const char* const path = "./hd.txt");</code></td></tr>
-    <tr><td>SaveHD</td>     <td><code>bool saveHD(const char* const path = "./hd.txt");</code></td></tr>
-    <tr><td>WriteTest</td>  <td><code>void writeTest(void);</code></td></tr>
-    <tr><td>PrintHD</td>    <td><code>void printHD(const size_t mode = ALL_SECT);</code></td></tr>
-</table>
+  | Nome        | Firma                                                |   
+  |:-----------:|:----------------------------------------------------------------:|
+  | ReadHD      |``` cpp bool readHD(void* buff, size_t len, u_int64_t n_sect); ``` |
+  <tr><th>Nome</th>       <th>Firma</th></tr>
+  <tr><td>ReadHD</td>     <td><code>bool readHD(void* buff,size_t len,u_int64_t n_sect);</code></td></tr>
+  <tr><td>WriteHD</td>    <td><code>bool writeHD(const void* const buff,size_t len,size_t mode = APPEND)</code></td></tr>
+  <tr><td>LoadHD</td>     <td><code>bool loadHD(const char* const path = "./hd.txt");</code></td></tr>
+  <tr><td>SaveHD</td>     <td><code>bool saveHD(const char* const path = "./hd.txt");</code></td></tr>
+  <tr><td>WriteTest</td>  <td><code>void writeTest(void);</code></td></tr>
+  <tr><td>PrintHD</td>    <td><code>void printHD(const size_t mode = ALL_SECT);</code></td></tr>
+
 
   ### readHD 
   <code>bool readHD(void* buff,size_t len,u_int64_t n_sect);</code>

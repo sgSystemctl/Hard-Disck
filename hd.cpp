@@ -1,4 +1,4 @@
-#include "./hd.h"
+#include "./hd.hpp"
 
 
 #define APPEND        0x00 
@@ -13,9 +13,8 @@ bool writeHD(const void* const buff,size_t len,size_t mode = APPEND){
         return false;
     }
     u_int8_t* buffer = (u_int8_t*)buff;
-    int i = 0;
     if(!mode){
-        while (i != DIM_TRACK)
+        for (int i = 0;i != DIM_TRACK;i++)
         {
             u_int8_t* track = &hd[n_sect].track[i];
             if(!len)
@@ -25,10 +24,9 @@ bool writeHD(const void* const buff,size_t len,size_t mode = APPEND){
                 *track = buffer[i];
                 len--;
             }
-            i++;    
         }
     }else if(mode & NO_APPEND){
-        while (i != DIM_TRACK)
+        for (int i = 0;i != DIM_TRACK;i++)
         {
             u_int8_t* track = &hd[n_sect].track[i];
             if(!len)
