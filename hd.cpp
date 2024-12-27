@@ -1,12 +1,8 @@
 #include "./hd.hpp"
 
-
-#define APPEND        0x00 
-#define NO_APPEND     0x01
-
 //Scrive sul disco in due modalità append e non append
 //nel 4 track più significati è scritto il settore da scrivere
-bool writeHD(const void* const buff,size_t len,size_t mode = APPEND){
+bool writeHD(const void* const buff,size_t len,size_t mode){
     u_int8_t n_sect = mode >> 4;
     if(!buff || n_sect >= NUM_SECT){
         printf("Parametri non valido\n");
@@ -43,7 +39,7 @@ bool writeHD(const void* const buff,size_t len,size_t mode = APPEND){
 }
 
 //legge un intero settore
-bool readHD(void* buff,size_t len = DIM_TRACK,u_int64_t n_sect = 0){
+bool readHD(void* buff,size_t len,u_int64_t n_sect){
     if(!buff || !len || n_sect >= NUM_SECT){
         printf("Parametri non validi\n");
         return false;
@@ -63,14 +59,6 @@ bool readHD(void* buff,size_t len = DIM_TRACK,u_int64_t n_sect = 0){
     return false;
     
 }
-
-#define BIT_START 1 << 5
-#define BIT_READ  1 << 4 
-#define BIT_WRITE 1 << 3 
-
-#define ERR_READ        0x04
-#define ERR_WRITE       0x03
-#define ERR_MOD_UNKOWN  0x05 //modalità non supportata
 
 void* inth(void*){
     if(int_hd.control & BIT_READ){
@@ -93,10 +81,20 @@ void* inth(void*){
 
 
 bool start_disp(){
-    if(int_hd.control & BIT_START){
+    if(!(int_hd.control & BIT_START)){
         //futura impplementazione dove nelle seguenti righe verrà lanciato un thread/o un processo pesante che si occupa di fare il trasfermento vero e proprio
         pthread_t processo_esterno;
+        
+        #ifdef DEBUG
+            printf("[DEBUG]:Creazione processo esterno:");
+        #endif
+
         pthread_create(&processo_esterno,nullptr,&inth,nullptr);
+        
+        #ifdef DEBUG
+            printf("[DEBUG]:OK\n");
+        #endif
+
         pthread_join(processo_esterno,nullptr);
         int_hd.control = 0;
         if(int_hd.status == ERR_READ){
@@ -116,7 +114,7 @@ bool start_disp(){
 }
 
 
-bool saveHD(const char* const path = "./hd.txt"){
+bool saveHD(const char* const path){
     FILE* fd;
     fd = fopen(path,"w");
     if(!fd){
@@ -141,7 +139,7 @@ bool saveHD(const char* const path = "./hd.txt"){
     return true;
 }
 
-bool loadHD(const char* const path = "./hd.txt"){
+bool loadHD(const char* const path){
     FILE* fd;
     fd = fopen(path,"r");
     if(!fd){
@@ -154,7 +152,11 @@ bool loadHD(const char* const path = "./hd.txt"){
     {
         printf(".");
         for (int j = 0; j < DIM_TRACK; j++)
-            fscanf(fd,"%hhx ",&hd[i].track[j]);
+            if(fscanf(fd,"%hhx ",&hd[i].track[j]) == -1){
+                printf("Errore nella lettura del file %s",path);
+                return false;
+            
+            }
         
     }
     
@@ -163,14 +165,7 @@ bool loadHD(const char* const path = "./hd.txt"){
     return true;
 }
 
-
-//Modalità di stampa del disco
-#define ALL_SECT    (const u_int8_t) 0x00 //Modalità che stampa tutto il disco
-#define FIRST_SECT  (const u_int8_t) 0x01 //Modalità che stampa il primo settore
-#define N_SECT      (const u_int8_t) 0x02 //modalità dove viene stampato un intero settore il numero di settore è nella parte alta della parola
-#define LAST_SECT   (const u_int8_t) 0x04 //Modalità che stampa l'ultimo settore 
-
-void printHD(const size_t mode = ALL_SECT){
+void printHD(const size_t mode){
     if(!mode){
         for (int i = 0; i < NUM_SECT; i++)
         {
@@ -227,85 +222,3 @@ void writeTest(void){
         writeHD(buffer,sizeof(buffer), ((i << 4) | NO_APPEND));
     }
 }
-
-#ifdef MAIN
-    int main(void){
-        memset((void *)&hd,0,sizeof(hd));
-        //test
-        //stampo tutto il disco
-        printHD();
-        printf("\n");
-        //stampo il primo settore
-        printHD(FIRST_SECT);
-        printf("\n");
-        //stampo il settore numero 5
-        {
-            u_int8_t tmp = (5 << 4);
-            printf("Prima di scrivere nel settore %d\n",tmp>>4);
-            printHD(tmp | N_SECT);
-            printf("\n");
-            
-            printf("Dopo di scrivere nel settore %d\n",tmp>>4);
-            char* a = "Hello World";
-            if(!writeHD(a,strlen(a),tmp | NO_APPEND))
-                printf("Scrittura non riuscita\n");
-            else
-                printHD(tmp | N_SECT);
-            char* b = new char[strlen(a)+1];
-            if(!readHD(b,strlen(a),tmp >> 4))
-                printf("Lettura non riuscita\n");
-            else
-                printf("Lettura riuscita: %s\n",b);
-            printf("\n");
-        }
-        //stampo l'ultimo settore
-        printHD(LAST_SECT);
-        printf("\n");
-
-        
-
-        //salvo il disco
-        if(!saveHD())
-            printf("Salvataggio fallito\n");
-        else
-            printHD();
-        
-        //Sporco il disco
-        printf("\n");
-        writeTest();
-        printHD();
-
-        //carico il vecchio disco
-        if(!loadHD())
-            printf("Caricamento fallito\n");
-        else
-            printHD();
-        
-        printf("Trasfermento mediante interfaccia\n");
-        int_hd.num_sect = 5;
-        int_hd.control |= BIT_START | BIT_READ;
-        memset(&int_hd.data,0,sizeof(sector));
-        if(!start_disp())
-            return EXIT_FAILURE;
-        
-        for (int i = 0; i < DIM_TRACK; i++)
-        {
-            printf("%.2x ",int_hd.data.track[i]);
-        }
-        printf("\n");
-        
-        printf("Scrittura mediante dispositivo\n");
-        char* buf = "prova di scrittura tramite interfaccia\n";
-        int_hd.control |= BIT_START | BIT_WRITE;
-        memset(&int_hd.data,0,sizeof(sector));
-        memcpy(&int_hd.data,buf,strlen(buf)+1);
-        int_hd.num_sect = 1;
-        start_disp();
-        printHD();
-
-
-
-
-
-    }
-#endif
