@@ -1,8 +1,8 @@
 #include "./hd.hpp"
 
-extern HD hd[NUM_FACES];
+HD hd[NUM_FACES];
 
-extern interface int_hd;
+interface int_hd = {0};
 
 //Scrive sul disco in due modalità append e non append
 //nel 4 track più significati è scritto il settore da scrivere
