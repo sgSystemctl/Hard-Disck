@@ -34,6 +34,7 @@ int main(void)
             printf("Lettura non riuscita\n");
         else
             printf("Lettura riuscita: %s\n", b);
+        //Cancello la variabile di test
         delete b;
         
         printf("\n");
