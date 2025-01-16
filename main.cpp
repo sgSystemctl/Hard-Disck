@@ -5,7 +5,6 @@ extern interface int_hd;
 
 int main(void)
 {
-    memset((void *)&hd, 0, sizeof(hd));
     // test
     // stampo tutto il disco
     printHD();
